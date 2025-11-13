@@ -1,13 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="blocks/moochat/db" VERSION="20251030" COMMENT="XMLDB file for Moodle blocks/moochat"
+<XMLDB PATH="mod/moochat/db" VERSION="20251030" COMMENT="XMLDB file for Moodle mod/moochat"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="block_moochat_usage" COMMENT="Tracks student usage of MooChat blocks">
+    <TABLE NAME="moochat" COMMENT="MooChat activity instances">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="instanceid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Block instance ID"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Course ID"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Activity name"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Activity description"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Intro format"/>
+	<FIELD NAME="display" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Display mode: 0=separate page, 1=inline"/>	
+        <FIELD NAME="include_section_content" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Include section content as context"/>   
+        <FIELD NAME="include_hidden_content" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Include hidden content in section context"/>
+        <FIELD NAME="chatsize" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="medium" SEQUENCE="false" COMMENT="Chat interface size: small, medium, large"/>
+        <FIELD NAME="systemprompt" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="AI system prompt"/>
+        <FIELD NAME="avatarurl" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Avatar image URL or file"/>
+        <FIELD NAME="avatarsize" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="64" SEQUENCE="false" COMMENT="Avatar size in pixels"/>
+        <FIELD NAME="ratelimit_enable" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Enable rate limiting"/>
+        <FIELD NAME="ratelimit_period" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="day" SEQUENCE="false" COMMENT="Rate limit period (hour/day)"/>
+        <FIELD NAME="ratelimit_count" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="10" SEQUENCE="false" COMMENT="Max questions per period"/>
+        <FIELD NAME="maxmessages" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="20" SEQUENCE="false" COMMENT="Max messages per session"/>
+        <FIELD NAME="temperature" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="0.7" SEQUENCE="false" COMMENT="AI temperature"/>
+        <FIELD NAME="model" TYPE="char" LENGTH="50" NOTNULL="true" DEFAULT="llama2:latest" SEQUENCE="false" COMMENT="AI model to use"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time created"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time modified"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="course" TYPE="foreign" FIELDS="course" REFTABLE="course" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="moochat_usage" COMMENT="Tracks student usage of MooChat activities">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="moochatid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="MooChat activity ID"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User ID"/>
         <FIELD NAME="messagecount" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of messages sent"/>
         <FIELD NAME="firstmessage" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp of first message in period"/>
@@ -15,11 +43,11 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="instanceid" TYPE="foreign" FIELDS="instanceid" REFTABLE="block_instances" REFFIELDS="id"/>
+        <KEY NAME="moochatid" TYPE="foreign" FIELDS="moochatid" REFTABLE="moochat" REFFIELDS="id"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="instanceid-userid" UNIQUE="true" FIELDS="instanceid, userid"/>
+        <INDEX NAME="moochatid-userid" UNIQUE="true" FIELDS="moochatid, userid"/>
       </INDEXES>
     </TABLE>
   </TABLES>

@@ -1,49 +1,54 @@
 ==============================================================================
-MooChat Block for Moodle
+MooChat Activity Module for Moodle
 ==============================================================================
 
 Author: Brian A. Pool
 Organization: National Trail Local Schools
-Email: bpool@nationaltrail.us
 Version: 1.1
 License: GNU GPL v3 or later
-Moodle Required: 4.5 or higher
+Moodle Required: 4.0 or higher
 
 ==============================================================================
 DESCRIPTION
 ==============================================================================
 
-MooChat Block transforms your Moodle course sidebar into an interactive AI 
-assistant. Teachers can create multiple chatbot blocks, each with its own 
-personality, avatar, and purpose - from subject tutors to historical figures.
+MooChat is an AI-powered chat activity module that brings intelligent 
+conversation capabilities to your Moodle courses. Teachers can create 
+customizable AI assistants with unique personalities, avatars, and purposes - 
+from subject tutors to historical figures.
 
-Unlike the MooChat Activity module, the block version is designed for sidebar 
-placement and provides quick, always-visible access to AI assistance without 
-leaving the current page.
+Unlike sidebar blocks, MooChat provides a full-featured activity that can be 
+displayed inline on the course page or as a dedicated activity page, making 
+it perfect for central course interactions.
 
 ==============================================================================
 KEY FEATURES
 ==============================================================================
 
 - Custom AI Personalities - Define unique system prompts for each chatbot
-- Avatar Support - Upload custom images with adjustable sizing (32-128px)
-- Multiple Instances - Add different chatbots to the same course
-- Compact Design - Optimized for sidebar placement
+- Flexible Display Modes - Choose between inline (embedded on course page) 
+  or separate page display
+- Avatar Support - Upload custom images with adjustable sizing (48-128px)
+- Adjustable Chat Size - Three size options (Small, Medium, Large) to fit 
+  your layout needs
+- Section Content Integration - AI can access course materials (pages, books, 
+  labels, assignments, URLs, glossary) from the current section
+- Hidden Content Option - Choose whether AI can reference hidden course 
+  materials
 - Rate Limiting - Prevent AI resource abuse with configurable question limits 
   (per hour or per day)
 - Server-Side Tracking - Students cannot bypass limits by clearing chat
 - Auto-Cleanup - Usage records automatically purge after 7 days
-- User-Friendly Interface - Clean chat interface with message history
-- Message Formatting - Long AI responses formatted with paragraphs and bullet 
-  points for readability
-- Stacked or Inline Layout - Avatar displays inline for small sizes, stacked 
-  for large sizes
+- Professional Layout - Horizontal design with avatar/info on left, chat on 
+  right
+- Message Formatting - Long AI responses are formatted with paragraphs, line 
+  breaks, and bullet points for readability
 
 ==============================================================================
 SYSTEM REQUIREMENTS
 ==============================================================================
 
-- Moodle 4.5 or higher
+- Moodle 4.0 or higher
 - PHP 8.0 or higher
 - MySQL 5.7+ or MariaDB 10.2+ or PostgreSQL 9.6+
 - Moodle Core AI Subsystem configured with at least one AI provider
@@ -60,7 +65,7 @@ INSTALLATION
 OPTION 1: Manual Installation
 ------------------------------
 1. Download the plugin package
-2. Extract the contents to: [moodleroot]/blocks/moochat
+2. Extract the contents to: [moodleroot]/mod/moochat
 3. Navigate to: Site Administration > Notifications
 4. Click "Upgrade Moodle database now"
 5. Follow the on-screen instructions
@@ -77,55 +82,41 @@ POST-INSTALLATION:
 1. Ensure Moodle's AI subsystem is configured:
    Site Administration > AI > AI providers
 2. Enable and configure at least one AI provider
-3. Test the configuration with a sample block
+3. Test the configuration with a sample activity
 
 ==============================================================================
 CONFIGURATION
 ==============================================================================
 
-ADDING A MOOCHAT BLOCK:
-
-1. Navigate to a course
-2. Turn editing on
-3. Click "Add a block"
-4. Select "MooChat" from the list
-5. The block appears in the sidebar with default settings
-
-BLOCK CONFIGURATION:
-
-To configure a MooChat block:
-1. Click the gear icon on the block
-2. Select "Configure MooChat block"
-
-Configuration Options:
+ACTIVITY SETTINGS:
 
 General Settings:
-- Chatbot Name - Custom name for your AI assistant
-  Examples: "Math Tutor", "Benjamin Franklin", "Code Helper"
-
-Avatar:
-- Avatar Image - Upload an image to represent your chatbot
-- Avatar Size - Choose from Small (32x32) to Extra Large (128x128)
-  Note: Sizes 32-64px display inline with title, 128px displays stacked
+- Chat Name - Give your AI assistant a descriptive name
+- Introduction - Describe the purpose of this chat (optional)
+- Display Mode - Choose "Separate page" or "Inline on course page"
+- Chat Interface Size - Select Small, Medium, or Large
+- Include Section Content - Enable to let AI access course materials
+- Include Hidden Content - Enable to include hidden materials (teachers only)
 
 AI Personality:
-- System Prompt - Define how the AI should behave
+- System Prompt - Define how the AI should behave and respond
   Examples:
-  - "You are a helpful math tutor who explains concepts step-by-step"
-  - "You are Shakespeare, speaking in poetic language about literature"
-  - "You are a friendly science teacher who uses real-world examples"
+  - "You are a friendly math tutor who explains step-by-step"
+  - "You are Benjamin Franklin discussing your inventions"
+  - "You are a Python programming expert"
+
+Avatar:
+- Upload an image to represent your chatbot
+- Choose avatar size (48px to 128px)
 
 Rate Limiting:
 - Enable Rate Limiting - Turn on to prevent abuse
 - Rate Limit Period - Choose "Per Hour" or "Per Day"
-- Maximum Questions - Set number of questions allowed per period
-  Example: "10 questions per day" means students get 10 questions, 
-  then must wait until tomorrow
+- Maximum Questions - Set the number of questions allowed
 
-Additional Settings:
-- Maximum Messages per Session - Legacy setting, use Rate Limiting instead
-- Creativity Level (Temperature) - Control response variety (0.1-0.9)
-  Lower = More focused, Higher = More creative
+Advanced Settings:
+- Maximum Messages per Session - Deprecated, use Rate Limiting instead
+- Temperature - Control AI creativity (0.1-0.9)
 
 ==============================================================================
 USAGE
@@ -133,90 +124,66 @@ USAGE
 
 FOR TEACHERS:
 
-Creating Multiple Chatbots:
-- Add multiple MooChat blocks to provide different AI assistants
-- Example setup:
-  - "Math Helper" - Explains math concepts
-  - "Writing Coach" - Helps with essays and grammar
-  - "Historical Figure" - Role-plays as a person from history
-
-Block Visibility:
-- Click the eye icon to hide/show blocks
-- Configure block visibility by role if needed
-- Move blocks to different regions using drag-and-drop
+Creating a MooChat Activity:
+1. Turn editing on in your course
+2. Click "Add an activity or resource"
+3. Select "MooChat" from the Activities section
+4. Configure the activity settings:
+   - Give it a name and description
+   - Choose display mode and size
+   - Upload an avatar (optional)
+   - Write a system prompt to define AI personality
+   - Enable section content if you want AI to reference course materials
+   - Set rate limits if desired
+5. Save and display
 
 Best Practices:
 - Write clear, specific system prompts
-- Use descriptive names so students know the purpose
-- Upload appropriate avatars for visual identification
-- Set rate limits to manage AI usage
-- Test chatbot responses before enabling for students
+- Test the chatbot before students use it
+- Use rate limiting to manage AI usage
+- Enable section content for context-aware responses
+- Use inline display for always-available assistance
+- Use separate page for focused chat sessions
 
 FOR STUDENTS:
 
-Using a MooChat Block:
-1. Find the MooChat block in the course sidebar
-2. Read the block title to understand its purpose
+Using MooChat:
+1. Navigate to the course section with MooChat
+2. If inline mode: Chat appears directly on the course page
+   If separate page: Click the activity link to open
 3. Type your question in the text box
 4. Press Enter or click "Send"
-5. Wait a few seconds for the AI response
+5. Wait for the AI to respond
 6. Continue the conversation as needed
-7. Click "Clear Chat" to start over (doesn't reset question limit!)
+7. Click "Clear Chat" to start a new conversation
 
-Understanding Rate Limits:
-- If rate limiting is enabled, you'll see "Questions remaining: X"
-- Each question you ask decreases the count
-- When you reach 0, you must wait until the time period expires
-- Clearing the chat does NOT give you more questions
-- The counter resets after the configured time period (hour or day)
-
-Tips for Better Responses:
+Tips:
 - Ask clear, specific questions
-- Provide context when needed
-- Be patient - responses take a few seconds
-- If unsure about something, ask for clarification
+- Reference course materials when enabled
+- Be patient - AI responses may take a few seconds
+- Your question limit (if set) persists across sessions
 
 ==============================================================================
-TEACHER VIEW
+SECTION CONTENT INTEGRATION
 ==============================================================================
 
-When a teacher edits a course, MooChat blocks display differently:
+When "Include Section Content" is enabled, the AI has access to:
 
-TEACHER EDIT MODE:
-- Shows "Teacher Configuration" instead of chat interface
-- Displays current system prompt
-- Provides link to edit configuration
-- Helps teachers review settings without chatting
+- Pages (mod_page) - Full text content
+- Books (mod_book) - All chapters and content
+- Labels - Text displayed on course page
+- Assignments - Assignment descriptions
+- URLs - Link titles and descriptions
+- Glossary - All terms and definitions
 
-NORMAL VIEW (not editing):
-- Teachers see the same chat interface as students
-- Can test and verify chatbot responses
-- Can use the chat normally
+This allows students to ask questions like:
+- "What are the main points from the reading?"
+- "Can you explain the assignment requirements?"
+- "Define the terms from the glossary"
+- "Summarize what we learned in this section"
 
-==============================================================================
-COMPARING BLOCK VS. ACTIVITY
-==============================================================================
-
-MOOCHAT BLOCK:
-✓ Sidebar placement
-✓ Always visible
-✓ Quick access
-✓ Multiple instances per course
-✓ Compact design
-✗ No section content integration
-✗ Fixed size (sidebar width)
-
-MOOCHAT ACTIVITY:
-✓ Center of course page
-✓ Inline or separate page options
-✓ Adjustable sizes (small/medium/large)
-✓ Section content integration
-✓ Can reference course materials
-✗ Only one per activity
-✗ Requires click to access (if separate page)
-
-RECOMMENDATION: Use blocks for quick Q&A and activities for comprehensive 
-course tutoring with content integration.
+PRIVACY NOTE: Students can ask the AI about hidden content if the teacher 
+enables "Include Hidden Content". Use this feature carefully.
 
 ==============================================================================
 TROUBLESHOOTING
@@ -229,64 +196,32 @@ AI Not Responding:
 - Ensure network allows connections to AI provider
 
 Rate Limit Not Working:
-- Verify rate limiting is enabled in block settings
-- Check database table exists: [prefix]_block_moochat_usage
+- Verify rate limiting is enabled in activity settings
+- Check database table exists: [prefix]_moochat_usage
 - Students may need to wait until the time period expires
-- Clear Moodle cache after configuration changes
 
-Avatar Not Displaying:
-- Verify image was uploaded successfully
-- Check file permissions on moodledata directory
-- Try re-uploading the image
-- Ensure image is in a supported format (JPG, PNG, GIF)
-
-Block Not Appearing:
-- Verify block is installed: Site Administration > Plugins > Blocks
-- Check course format supports blocks
-- Ensure editing is turned on when adding
-- Check block visibility settings
+Section Content Not Loading:
+- Verify "Include Section Content" is enabled
+- Check that content exists in the same section as MooChat
+- Review PHP error logs for database query issues
 
 Formatting Issues:
 - Clear Moodle cache: Site Administration > Development > Purge all caches
 - Clear browser cache and refresh page
 - Check that JavaScript is enabled in browser
-- Try a different browser to isolate the issue
 
 ==============================================================================
 DATABASE TABLES
 ==============================================================================
 
-This plugin creates one table:
+This plugin creates two tables:
 
-[prefix]_block_moochat_usage  
-- Tracks student usage for rate limiting per block instance
-- Links to block instance ID and user ID
-- Automatically cleaned of records older than 7 days
-- Stores: messagecount, firstmessage, lastmessage timestamps
+[prefix]_moochat
+- Stores activity instances and configuration
 
-==============================================================================
-TECHNICAL NOTES
-==============================================================================
-
-Avatar Handling:
-- Files stored in Moodle file system
-- Context: CONTEXT_BLOCK
-- File area: 'avatar'
-- Maximum 1 file per block instance
-- Supported formats: All image types
-
-Rate Limiting:
-- Server-side enforcement prevents bypass
-- Uses timestamps to track time periods
-- Automatic reset when period expires
-- Cleanup runs on every chat request (minimal overhead)
-
-JavaScript:
-- AMD module: blocks/moochat/chat
-- jQuery-based for compatibility
-- AJAX calls to chat_service.php
-- Maintains conversation history in browser session
-- Formats responses dynamically
+[prefix]_moochat_usage  
+- Tracks student usage for rate limiting
+- Automatically cleaned every 7 days
 
 ==============================================================================
 SUPPORT & DEVELOPMENT
@@ -294,7 +229,6 @@ SUPPORT & DEVELOPMENT
 
 Author: Brian A. Pool
 Organization: National Trail Local Schools
-Email: bpool@nationaltrail.us
 
 For issues, feature requests, or contributions:
 - Report bugs via email to the author
@@ -330,31 +264,16 @@ Special thanks to:
 CHANGELOG
 ==============================================================================
 
-Version 1.1 (2025-10-30)
-- Removed unused settings (AI model selection, Ollama endpoint)
-- Cleaned up settings page to only show per-instance configuration
-- Enhanced message formatting for better readability
-- Improved avatar display with size options
-
-Version 1.0 (2025-10-28)
+Version 1.0 (2025-10-30)
 - Initial release
 - Core chat functionality with AI integration
-- Multiple block instances support
+- Display modes: inline and separate page
+- Section content integration
 - Rate limiting with server-side tracking
-- Avatar support with flexible sizing
-- Message formatting for long responses
+- Avatar support with size options
+- Adjustable chat interface sizes
+- Message formatting for readability
+- Hidden content option for teachers
 - Auto-cleanup of usage data
-- Teacher configuration view
-
-==============================================================================
-RELATED PLUGINS
-==============================================================================
-
-MooChat Activity Module:
-A companion plugin that provides full-featured AI chat as a course activity
-with section content integration and flexible display modes. Search for
-"MooChat Activity" by Brian A. Pool.
-
-Both plugins can be used together or independently based on your needs.
 
 ==============================================================================

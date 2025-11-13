@@ -14,16 +14,22 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_moochat\output;
+
+use plugin_renderer_base;
+
 defined('MOODLE_INTERNAL') || die();
 
-$functions = [
-    'mod_moochat_send_message' => [
-        'classname'   => 'mod_moochat\external\send_message',
-        'methodname'  => 'execute',
-        'description' => 'Send a chat message and receive AI response',
-        'type'        => 'write',
-        'ajax'        => true,
-        'capabilities'=> 'mod/moochat:submit',
-        'loginrequired' => true,
-    ],
-];
+class renderer extends plugin_renderer_base {
+
+    /**
+     * Render the chat interface.
+     *
+     * @param chat_interface $chatinterface
+     * @return string HTML
+     */
+    public function render_chat_interface(chat_interface $chatinterface) {
+        $data = $chatinterface->export_for_template($this);
+        return $this->render_from_template('mod_moochat/chat_interface', $data);
+    }
+}
