@@ -4,17 +4,16 @@
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-
+// any later version.
 /**
- * Define all the restore steps that will be used by the restore_moochat_activity_task
+ * Privacy Subsystem implementation for block_moochat
  *
- * @package    mod_moochat
- * @copyright  2025 Brian A. Pool
+ * @package    block_moochat
+ * @copyright  2026 Brian A. Pool
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_moochat\privacy;
+namespace block_moochat\privacy;
 
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
@@ -23,8 +22,9 @@ use core_privacy\local\request\contextlist;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * Privacy Subsystem for block_moochat implementing metadata and plugin providers.
+ */
 class provider implements
     \core_privacy\local\metadata\provider,
     \core_privacy\local\request\plugin\provider,
@@ -37,15 +37,29 @@ class provider implements
      * @return collection A listing of user data stored through this system.
      */
     public static function get_metadata(collection $collection): collection {
+        
         $collection->add_database_table(
-            'moochat_usage',
+            'block_moochat_usage',
             [
-                'userid' => 'privacy:metadata:moochat_usage:userid',
-                'messagecount' => 'privacy:metadata:moochat_usage:messagecount',
-                'firstmessage' => 'privacy:metadata:moochat_usage:firstmessage',
-                'lastmessage' => 'privacy:metadata:moochat_usage:lastmessage',
+                'userid' => 'privacy:metadata:block_moochat_usage:userid',
+                'instanceid' => 'privacy:metadata:block_moochat_usage:instanceid',
+                'messagecount' => 'privacy:metadata:block_moochat_usage:messagecount',
+                'firstmessage' => 'privacy:metadata:block_moochat_usage:firstmessage',
+                'lastmessage' => 'privacy:metadata:block_moochat_usage:lastmessage',
             ],
-            'privacy:metadata:moochat_usage'
+            'privacy:metadata:block_moochat_usage'
+        );
+
+        $collection->add_database_table(
+            'block_moochat_conversations',
+            [
+                'userid' => 'privacy:metadata:block_moochat_conversations:userid',
+                'instanceid' => 'privacy:metadata:block_moochat_conversations:instanceid',
+                'role' => 'privacy:metadata:block_moochat_conversations:role',
+                'message' => 'privacy:metadata:block_moochat_conversations:message',
+                'timecreated' => 'privacy:metadata:block_moochat_conversations:timecreated',
+            ],
+            'privacy:metadata:block_moochat_conversations'
         );
 
         return $collection;
@@ -58,22 +72,25 @@ class provider implements
      * @return contextlist The contextlist containing the list of contexts used in this plugin.
      */
     public static function get_contexts_for_userid(int $userid): contextlist {
-        $sql = "SELECT c.id
-                  FROM {context} c
-            INNER JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
-            INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
-            INNER JOIN {moochat} mc ON mc.id = cm.instance
-            INNER JOIN {moochat_usage} mu ON mu.moochatid = mc.id
-                 WHERE mu.userid = :userid";
-
-        $params = [
-            'modname' => 'moochat',
-            'contextlevel' => CONTEXT_MODULE,
-            'userid' => $userid,
-        ];
-
         $contextlist = new contextlist();
-        $contextlist->add_from_sql($sql, $params);
+
+        // Usage data
+        $sql = "SELECT ctx.id
+                  FROM {block_moochat_usage} u
+                  JOIN {block_instances} bi ON bi.id = u.instanceid
+                  JOIN {context} ctx ON ctx.instanceid = bi.id AND ctx.contextlevel = :contextblock
+                 WHERE u.userid = :userid";
+
+        $contextlist->add_from_sql($sql, ['userid' => $userid, 'contextblock' => CONTEXT_BLOCK]);
+
+        // Conversation data
+        $sql = "SELECT ctx.id
+                  FROM {block_moochat_conversations} c
+                  JOIN {block_instances} bi ON bi.id = c.instanceid
+                  JOIN {context} ctx ON ctx.instanceid = bi.id AND ctx.contextlevel = :contextblock
+                 WHERE c.userid = :userid";
+
+        $contextlist->add_from_sql($sql, ['userid' => $userid, 'contextblock' => CONTEXT_BLOCK]);
 
         return $contextlist;
     }
@@ -86,23 +103,27 @@ class provider implements
     public static function get_users_in_context(userlist $userlist) {
         $context = $userlist->get_context();
 
-        if (!$context instanceof \context_module) {
+        if ($context->contextlevel != CONTEXT_BLOCK) {
             return;
         }
 
-        $sql = "SELECT mu.userid
-                  FROM {course_modules} cm
-            INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
-            INNER JOIN {moochat} mc ON mc.id = cm.instance
-            INNER JOIN {moochat_usage} mu ON mu.moochatid = mc.id
-                 WHERE cm.id = :cmid";
+        // Usage data
+        $sql = "SELECT u.userid
+                  FROM {block_moochat_usage} u
+                  JOIN {block_instances} bi ON bi.id = u.instanceid
+                  JOIN {context} ctx ON ctx.instanceid = bi.id AND ctx.contextlevel = :contextblock
+                 WHERE ctx.id = :contextid";
 
-        $params = [
-            'cmid' => $context->instanceid,
-            'modname' => 'moochat',
-        ];
+        $userlist->add_from_sql('userid', $sql, ['contextid' => $context->id, 'contextblock' => CONTEXT_BLOCK]);
 
-        $userlist->add_from_sql('userid', $sql, $params);
+        // Conversation data
+        $sql = "SELECT c.userid
+                  FROM {block_moochat_conversations} c
+                  JOIN {block_instances} bi ON bi.id = c.instanceid
+                  JOIN {context} ctx ON ctx.instanceid = bi.id AND ctx.contextlevel = :contextblock
+                 WHERE ctx.id = :contextid";
+
+        $userlist->add_from_sql('userid', $sql, ['contextid' => $context->id, 'contextblock' => CONTEXT_BLOCK]);
     }
 
     /**
@@ -119,39 +140,45 @@ class provider implements
 
         $user = $contextlist->get_user();
 
-        list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
+        foreach ($contextlist->get_contexts() as $context) {
+            if ($context->contextlevel != CONTEXT_BLOCK) {
+                continue;
+            }
 
-        $sql = "SELECT cm.id AS cmid,
-                       mu.messagecount,
-                       mu.firstmessage,
-                       mu.lastmessage,
-                       mc.name
-                  FROM {context} c
-            INNER JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
-            INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
-            INNER JOIN {moochat} mc ON mc.id = cm.instance
-            INNER JOIN {moochat_usage} mu ON mu.moochatid = mc.id
-                 WHERE c.id {$contextsql}
-                       AND mu.userid = :userid
-              ORDER BY cm.id";
+            $instanceid = $context->instanceid;
 
-        $params = [
-            'modname' => 'moochat',
-            'contextlevel' => CONTEXT_MODULE,
-            'userid' => $user->id,
-        ] + $contextparams;
+            // Export usage data
+            $usage = $DB->get_record('block_moochat_usage', [
+                'instanceid' => $instanceid,
+                'userid' => $user->id
+            ]);
 
-        $usages = $DB->get_records_sql($sql, $params);
+            if ($usage) {
+                $data = (object) [
+                    'messagecount' => $usage->messagecount,
+                    'firstmessage' => \core_privacy\local\request\transform::datetime($usage->firstmessage),
+                    'lastmessage' => \core_privacy\local\request\transform::datetime($usage->lastmessage),
+                ];
+                writer::with_context($context)->export_data(['moochat_usage'], $data);
+            }
 
-        foreach ($usages as $usage) {
-            $context = \context_module::instance($usage->cmid);
-            $data = [
-                'name' => $usage->name,
-                'messagecount' => $usage->messagecount,
-                'firstmessage' => \core_privacy\local\request\transform::datetime($usage->firstmessage),
-                'lastmessage' => \core_privacy\local\request\transform::datetime($usage->lastmessage),
-            ];
-            writer::with_context($context)->export_data([], (object)$data);
+            // Export conversation data
+            $conversations = $DB->get_records('block_moochat_conversations', [
+                'instanceid' => $instanceid,
+                'userid' => $user->id
+            ], 'timecreated ASC');
+
+            if ($conversations) {
+                $conversationdata = [];
+                foreach ($conversations as $conv) {
+                    $conversationdata[] = (object) [
+                        'role' => $conv->role,
+                        'message' => $conv->message,
+                        'timecreated' => \core_privacy\local\request\transform::datetime($conv->timecreated),
+                    ];
+                }
+                writer::with_context($context)->export_data(['moochat_conversations'], (object)['conversations' => $conversationdata]);
+            }
         }
     }
 
@@ -163,16 +190,14 @@ class provider implements
     public static function delete_data_for_all_users_in_context(\context $context) {
         global $DB;
 
-        if (!$context instanceof \context_module) {
+        if ($context->contextlevel != CONTEXT_BLOCK) {
             return;
         }
 
-        $cm = get_coursemodule_from_id('moochat', $context->instanceid);
-        if (!$cm) {
-            return;
-        }
-
-        $DB->delete_records('moochat_usage', ['moochatid' => $cm->instance]);
+        $instanceid = $context->instanceid;
+        
+        $DB->delete_records('block_moochat_usage', ['instanceid' => $instanceid]);
+        $DB->delete_records('block_moochat_conversations', ['instanceid' => $instanceid]);
     }
 
     /**
@@ -187,16 +212,24 @@ class provider implements
             return;
         }
 
-        $userid = $contextlist->get_user()->id;
+        $user = $contextlist->get_user();
+
         foreach ($contextlist->get_contexts() as $context) {
-            if (!$context instanceof \context_module) {
+            if ($context->contextlevel != CONTEXT_BLOCK) {
                 continue;
             }
-            $cm = get_coursemodule_from_id('moochat', $context->instanceid);
-            if (!$cm) {
-                continue;
-            }
-            $DB->delete_records('moochat_usage', ['moochatid' => $cm->instance, 'userid' => $userid]);
+
+            $instanceid = $context->instanceid;
+            
+            $DB->delete_records('block_moochat_usage', [
+                'instanceid' => $instanceid,
+                'userid' => $user->id
+            ]);
+            
+            $DB->delete_records('block_moochat_conversations', [
+                'instanceid' => $instanceid,
+                'userid' => $user->id
+            ]);
         }
     }
 
@@ -210,20 +243,25 @@ class provider implements
 
         $context = $userlist->get_context();
 
-        if (!$context instanceof \context_module) {
+        if ($context->contextlevel != CONTEXT_BLOCK) {
             return;
         }
 
-        $cm = get_coursemodule_from_id('moochat', $context->instanceid);
-        if (!$cm) {
-            return;
-        }
-
+        $instanceid = $context->instanceid;
         $userids = $userlist->get_userids();
-        list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
 
-        $select = "moochatid = :moochatid AND userid $usersql";
-        $params = ['moochatid' => $cm->instance] + $userparams;
-        $DB->delete_records_select('moochat_usage', $select, $params);
+        if (empty($userids)) {
+            return;
+        }
+
+        list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        
+        $DB->delete_records_select('block_moochat_usage', 
+            "instanceid = :instanceid AND userid $usersql",
+            array_merge(['instanceid' => $instanceid], $userparams));
+        
+        $DB->delete_records_select('block_moochat_conversations', 
+            "instanceid = :instanceid AND userid $usersql",
+            array_merge(['instanceid' => $instanceid], $userparams));
     }
 }

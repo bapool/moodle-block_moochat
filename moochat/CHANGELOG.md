@@ -1,6 +1,118 @@
 # Changelog for block_moochat
 
 All notable changes to this project will be documented in this file.
+
+## [Version 1.5] - 2026-02-11 (Later)
+
+### Added
+- **Collapsible Date Sections** in conversation view
+  - Conversations now grouped by date with collapsible sections
+  - "Expand All" and "Collapse All" buttons for easy navigation
+  - All dates collapsed by default to reduce clutter
+  - Message count displayed for each date
+  - Smooth animations for expand/collapse transitions
+
+### Changed
+- **View Conversations button now always visible to teachers**
+  - Previously only visible in edit mode
+  - Now appears in block footer for teachers at all times
+  - Makes conversation monitoring more accessible
+  
+- **Improved Conversation Display**
+  - Student name shown instead of generic "Student" label
+  - Chatbot name from block config shown instead of generic "Assistant" label
+  - Date/time separated: date in section header, time in message header
+  - Messages within same day show only time (not full date/time)
+  - Better visual hierarchy with message grouping
+
+- **Enhanced Privacy Implementation**
+  - Complete GDPR-compliant privacy provider
+  - Supports data export for user conversation history
+  - Supports data deletion for individual users or all users
+  - Implements userlist provider for bulk operations
+  - Proper metadata declarations for both usage and conversation tables
+
+### Fixed
+- Language string issues (expandall, collapseall, messages now properly defined)
+- JavaScript collapse functionality now works reliably
+- Default collapsed state works correctly
+
+### Technical Details
+- Simplified JavaScript for collapse functionality (no Bootstrap API dependency)
+- Added proper language strings for UI controls
+- Enhanced CSS for collapsible sections with hover states
+- Privacy provider fully implements all required interfaces
+
+## [Version 1.4] - 2026-02-11
+
+### Added
+- **Conversation Tracking System**
+  - New database table `block_moochat_conversations` to store all chat messages
+  - Teacher view page to see list of all students with conversations
+  - Individual conversation detail page showing full chat history
+  - Timestamps recorded for each message
+  - Conversations displayed in chronological order with clear user/assistant labels
+  - Message count and last message time displayed for each student
+
+- **Teacher Features**
+  - "View Conversations" button added to block (visible in edit mode)
+  - Student list showing all users who have chatted with the bot
+  - Click-through to view complete conversation history
+  - Clean, readable chat-style display with proper styling
+
+- **Data Management**
+  - Conversations stored indefinitely (no automatic deletion)
+  - Automatic cleanup when block instance is deleted
+  - Integration with Moodle's course reset functionality
+  - Option to delete all MooChat conversations during course reset
+  - GDPR-compliant privacy API updates for conversation data
+
+- **New External Service**
+  - `block_moochat_save_conversation` AJAX service
+  - Automatically saves conversations after each message exchange
+  - Silent failure handling (doesn't interrupt user experience)
+
+### Changed
+- **Data Retention Policy**
+  - Removed 7-day auto-cleanup of usage records
+  - Conversations now kept until block deletion or course reset
+  - Better aligned with educational needs for year-long courses
+
+- **Block Deletion Behavior**
+  - Added `instance_delete()` method to block class
+  - Properly removes all conversations and usage data on deletion
+  - Clean database state after block removal
+
+- **Course Reset Integration**
+  - Added reset functions to lib.php
+  - Checkbox option in course reset form
+  - Deletes conversations for all MooChat blocks in course when reset
+  - Follows Moodle course reset standards
+
+### Technical Details
+- Created new database table with proper indexes for performance
+- Added upgrade script (db/upgrade.php) for existing installations
+- Updated JavaScript to call save_conversation service
+- Added CSS styling for conversation view pages
+- New language strings for conversation tracking features
+- Privacy API metadata updated for GDPR compliance
+- External services properly registered in db/services.php
+
+### Files Added
+- `classes/external/save_conversation.php` - External service for saving conversations
+- `view_conversations.php` - Teacher view page for conversations
+- `db/upgrade.php` - Database upgrade script
+
+### Files Modified
+- `db/install.xml` - Added conversations table schema
+- `db/services.php` - Registered save_conversation service
+- `version.php` - Updated to 2026021100 (v1.4)
+- `block_moochat.php` - Added View Conversations button and instance_delete method
+- `lib.php` - Added course reset and block deletion handlers
+- `lang/en/block_moochat.php` - Added conversation tracking strings
+- `styles.css` - Added conversation view styling
+- `amd/src/chat.js` - Added conversation saving after message exchange
+
 ## [Version 1.3] - 2025-11-13
 
 ### Fixed

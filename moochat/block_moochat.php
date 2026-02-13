@@ -67,6 +67,23 @@ class block_moochat extends block_base {
         return true;
     }
     
+    /**
+     * Delete block instance data when block is deleted
+     *
+     * @return bool
+     */
+    public function instance_delete() {
+        global $DB;
+        
+        // Delete all conversations for this block instance
+        $DB->delete_records('block_moochat_conversations', array('instanceid' => $this->instance->id));
+        
+        // Delete all usage records for this block instance
+        $DB->delete_records('block_moochat_usage', array('instanceid' => $this->instance->id));
+        
+        return true;
+    }
+    
     public function instance_config_save($data, $nolongerused = false) {
         global $USER;
         
@@ -145,8 +162,19 @@ class block_moochat extends block_base {
             // Show configuration prompt for teachers in edit mode
             $this->content->text .= $this->get_teacher_config_view();
         } else {
-            // Show chat interface for students
+            // Show chat interface for everyone (students and teachers)
             $this->content->text .= $this->get_chat_interface();
+            
+            // Add View Conversations button in footer for teachers (always visible)
+            if ($canedit) {
+                $conversationsurl = new moodle_url('/blocks/moochat/view_conversations.php', 
+                    array('instanceid' => $this->instance->id));
+                $this->content->footer = html_writer::div(
+                    html_writer::link($conversationsurl, get_string('viewconversations', 'block_moochat'), 
+                        array('class' => 'btn btn-sm btn-secondary btn-block')),
+                    'text-center mt-2'
+                );
+            }
         }
         
         return $this->content;
@@ -169,6 +197,13 @@ class block_moochat extends block_base {
         $editurl = new moodle_url('/blocks/moochat/edit_config.php', array('instanceid' => $instanceid));
         $output .= html_writer::link($editurl, get_string('editconfiguration', 'block_moochat'), 
                    array('class' => 'btn btn-primary'));
+        
+        $output .= ' ';
+        
+        // Link to view conversations
+        $conversationsurl = new moodle_url('/blocks/moochat/view_conversations.php', array('instanceid' => $instanceid));
+        $output .= html_writer::link($conversationsurl, get_string('viewconversations', 'block_moochat'), 
+                   array('class' => 'btn btn-secondary'));
         
         $output .= html_writer::end_div();
         

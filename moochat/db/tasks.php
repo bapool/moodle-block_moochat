@@ -6,17 +6,23 @@
 // the Free Software Foundation, either version 3 of the License, or
 // any later version.
 /**
- * Privacy Subsystem implementation for mod_mooproof
+ * Task schedule configuration for block_moochat
  *
  * @package    block_moochat
- * @copyright  2025 Brian A. Pool
+ * @copyright  2026 Brian A. Pool
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'block_moochat';
-$plugin->requires = 2024042200; // Moodle 4.5
-$plugin->version = 2026021101;  // YYYYMMDDXX - Improved conversation view UI
-$plugin->maturity = MATURITY_BETA;
-$plugin->release = 'v1.5';
+$tasks = [
+    [
+        'classname' => 'block_moochat\task\cleanup_old_conversations',
+        'blocking' => 0,
+        'minute' => '0',
+        'hour' => '2',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+    ],
+];

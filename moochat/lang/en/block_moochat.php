@@ -74,12 +74,30 @@ $string['confirmclear'] = 'Clear all messages? (Your question limit will not res
 $string['error'] = 'Error';
 $string['connectionerror'] = 'Failed to connect to AI service';
 
-// Settings
+// Conversation tracking
+$string['viewconversations'] = 'View Conversations';
+$string['studentconversations'] = 'Student Conversations';
+$string['conversationwith'] = 'Conversation with {$a}';
+$string['messagecount'] = 'Messages';
+$string['messages'] = 'messages';
+$string['lastmessage'] = 'Last Message';
+$string['viewdetails'] = 'View Details';
+$string['backtolist'] = 'Back to List';
+$string['noconversations'] = 'No conversations found for this student.';
+$string['nostudentconversations'] = 'No student conversations yet.';
+$string['student'] = 'Student';
+$string['assistant'] = 'Assistant';
+$string['conversations'] = 'Conversations';
+$string['deleteallconversations'] = 'Delete all MooChat conversations';
+$string['expandall'] = 'Expand All';
+$string['collapseall'] = 'Collapse All';
+
 // Settings
 $string['ollama_endpoint'] = 'Ollama API Endpoint';
 $string['ollama_endpoint_desc'] = 'URL of your Ollama server API endpoint (e.g., https://blazerai.nationaltrail.us/ollama/v1/chat/completions)';
 $string['default_model'] = 'Default AI Model';
 $string['default_model_desc'] = 'Default model to use (e.g., llama2:latest, tinyllama:latest, gemma2:latest)';
+
 // Privacy API
 $string['privacy:metadata:block_moochat_usage'] = 'Information about the user\'s chat usage and rate limiting.';
 $string['privacy:metadata:block_moochat_usage:userid'] = 'The ID of the user.';
@@ -87,3 +105,9 @@ $string['privacy:metadata:block_moochat_usage:instanceid'] = 'The block instance
 $string['privacy:metadata:block_moochat_usage:messagecount'] = 'Number of messages sent by the user.';
 $string['privacy:metadata:block_moochat_usage:firstmessage'] = 'Timestamp of the first message in the current period.';
 $string['privacy:metadata:block_moochat_usage:lastmessage'] = 'Timestamp of the last message sent.';
+$string['privacy:metadata:block_moochat_conversations'] = 'Stores chat conversations between students and the AI assistant.';
+$string['privacy:metadata:block_moochat_conversations:userid'] = 'The ID of the user.';
+$string['privacy:metadata:block_moochat_conversations:instanceid'] = 'The block instance ID.';
+$string['privacy:metadata:block_moochat_conversations:role'] = 'The role of the message sender (user or assistant).';
+$string['privacy:metadata:block_moochat_conversations:message'] = 'The message content.';
+$string['privacy:metadata:block_moochat_conversations:timecreated'] = 'When the message was created.';
