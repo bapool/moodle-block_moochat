@@ -179,7 +179,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
             var clearChat = function() {
                 conversationHistory = [];
                 // MessageCount = 0;
-                messagesDiv.html('<p class="moochat-welcome">' + strings.chatcleared + '</p>');
+                messagesDiv.html('<p class="moochat-welcome">' + strings.welcomemessage + '</p>');
                 inputField.val('').focus();
                 // Note: remaining questions counter stays the same
             };

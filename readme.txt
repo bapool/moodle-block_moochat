@@ -5,7 +5,7 @@ MooChat Block for Moodle
 Author: Brian A. Pool
 Organization: National Trail Local Schools
 Email: bpool@nationaltrail.us
-Version: 1.5
+Version: 1.5.1
 License: GNU GPL v3 or later
 Moodle Required: 4.5 or higher
 
@@ -468,6 +468,12 @@ Special thanks to:
 ==============================================================================
 CHANGELOG
 ==============================================================================
+
+Version 1.5.1 (2026-02-19)
+- Personalized welcome message on chat load and after clearing chat
+- If no chatbot name is configured: "Hello, I am here if you want to chat."
+- If a chatbot name is configured: "Hello, my name is [Name], would you like to chat?"
+- Added startchat_named language string for named greeting
 
 Version 1.5 (2026-02-11)
 - Added collapsible date sections for conversation view

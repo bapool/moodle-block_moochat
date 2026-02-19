@@ -2,7 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Version 1.5] - 2026-02-11 (Later)
+## [Version 1.5.1] - 2026-02-19
+
+### Added
+- **Personalized Welcome Message**
+  - Chat now displays a friendly greeting on load instead of a generic prompt
+  - If no chatbot name is configured: "Hello, I am here if you want to chat."
+  - If a chatbot name is set in block configuration: "Hello, my name is [Name], would you like to chat?"
+  - Welcome message also shown after clearing chat (replaces "Chat cleared" message)
+  - Added `startchat_named` language string for the named greeting
+
+### Changed
+- `startchat` language string updated from "Start chatting with the AI assistant!" to "Hello, I am here if you want to chat."
+- `clearChat()` in JavaScript now restores the personalized welcome message instead of the generic cleared message
+
+### Files Modified
+- `lang/en/block_moochat.php` - Updated `startchat` string, added `startchat_named` string
+- `block_moochat.php` - Dynamic welcome message based on configured chatbot name; passes `welcomemessage` to JavaScript
+- `amd/src/chat.js` - Uses `strings.welcomemessage` on chat clear
+
+## [Version 1.5] - 2026-02-11
 
 ### Added
 - **Collapsible Date Sections** in conversation view

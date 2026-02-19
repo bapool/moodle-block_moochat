@@ -216,8 +216,18 @@ private function get_chat_interface() {
         $config = $this->config;
         $instanceid = $this->instance->id;
         
+        // Determine the AI name from block config title (if set)
+        $ainame = (isset($config->title) && !empty($config->title)) ? format_string($config->title) : '';
+
+        // Choose the appropriate welcome message
+        if (!empty($ainame)) {
+            $welcomemessage = get_string('startchat_named', 'block_moochat', $ainame);
+        } else {
+            $welcomemessage = get_string('startchat', 'block_moochat');
+        }
+
         // Prepare language strings for JavaScript
-       $strings = array(
+        $strings = array(
             'questionsremaining' => get_string('questionsremaining', 'block_moochat'),
             'chatcleared' => get_string('chatcleared', 'block_moochat'),
             'confirmclear' => get_string('confirmclear', 'block_moochat'),
@@ -226,17 +236,18 @@ private function get_chat_interface() {
             'error' => get_string('error', 'block_moochat'),
             'connectionerror' => get_string('connectionerror', 'block_moochat'),
             'chatlimitreached' => get_string('chatlimitreached', 'block_moochat'),
-            'maxmessagesreached' => get_string('maxmessagesreached', 'block_moochat')
+            'maxmessagesreached' => get_string('maxmessagesreached', 'block_moochat'),
+            'welcomemessage' => $welcomemessage
         );
-        
+
         // Include required JavaScript
         $PAGE->requires->js_call_amd('block_moochat/chat', 'init', array($instanceid, $strings));
-                
+
         $output = html_writer::start_div('moochat-interface', array('id' => 'moochat-' . $instanceid));
-        
+
         // Chat display area
         $output .= html_writer::start_div('moochat-messages', array('id' => 'moochat-messages-' . $instanceid));
-        $output .= html_writer::tag('p', get_string('startchat', 'block_moochat'), array('class' => 'moochat-welcome'));
+        $output .= html_writer::tag('p', $welcomemessage, array('class' => 'moochat-welcome'));
         $output .= html_writer::end_div();
         
         // Input area

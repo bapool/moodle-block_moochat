@@ -17,6 +17,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_moochat';
 $plugin->requires = 2024042200; // Moodle 4.5
-$plugin->version = 2026021101;  // YYYYMMDDXX - Improved conversation view UI
+$plugin->version = 2026021900;  // YYYYMMDDXX - Improved conversation view UI
 $plugin->maturity = MATURITY_BETA;
-$plugin->release = 'v1.5';
+$plugin->release = 'v1.5.1';

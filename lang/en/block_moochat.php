@@ -62,7 +62,8 @@ $string['ratelimitreached_day'] = 'per day';
 $string['ratelimitreached_title'] = 'Rate Limit Reached';
 
 // Chat interface
-$string['startchat'] = 'Start chatting with the AI assistant!';
+$string['startchat'] = 'Hello, I am here if you want to chat.';
+$string['startchat_named'] = 'Hello, my name is {$a}, would you like to chat?';
 $string['typemessage'] = 'Type your message here...';
 $string['send'] = 'Send';
 $string['clear'] = 'Clear Chat';
